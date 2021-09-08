@@ -1,0 +1,12 @@
+[
+  {
+    "Code": "1",
+    "Person": {
+      "FirstName": "Student",
+      "LastName": "User",
+      "Gender": 1,
+      "Role": 1,
+      "Email": "student@gmail.com"
+    }
+  }
+]
