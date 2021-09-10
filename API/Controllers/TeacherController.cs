@@ -15,36 +15,56 @@ using API.Helpers;
 
 namespace API.Controllers
 {
-  public class TeacherController : BaseApiController
-  {
-    private readonly ITeacherRepository _teacherRepo;
-    private readonly IMapper _mapper;
-    public TeacherController(ITeacherRepository teacherRepo, IMapper mapper)
+    public class TeacherController : BaseApiController
     {
-        _teacherRepo = teacherRepo;
-        _mapper = mapper;
+        private readonly ITeacherRepository _teacherRepo;
+        private readonly IMapper _mapper;
+        public TeacherController(ITeacherRepository teacherRepo, IMapper mapper)
+        {
+            _teacherRepo = teacherRepo;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<TeacherDto>> GetTeachers()
+        {
+          var teachers = await _teacherRepo.GetTeachersAsync();
+
+          var data = _mapper.Map<IReadOnlyList<Teacher>, IReadOnlyList<TeacherDto>>(teachers);
+
+          return Ok(data);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<TeacherDto>> GetTeacher(int id)
+        {
+          var teacher = await _teacherRepo.GetTeacherByIdAsync(id);
+
+          if (teacher == null) return NotFound(new ApiResponse(404));
+
+          return Ok(_mapper.Map<Teacher, TeacherDto>(teacher));
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<TeacherDto>> PostTeacher([FromBody] TeacherDto teacher)
+        {
+            var data = _mapper.Map<TeacherDto, Teacher>(teacher);
+            data = await _teacherRepo.AddAsync(data);
+            await _teacherRepo.SaveChangesAsync();
+
+            return Ok(_mapper.Map<Teacher, TeacherDto>(data));
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<TeacherDto>> PutTeacher([FromBody] TeacherDto teacher)
+        {
+            var data = _mapper.Map<TeacherDto, Teacher>(teacher);
+            data = _teacherRepo.Update(data);
+            await _teacherRepo.SaveChangesAsync();
+
+            return Ok(_mapper.Map<Teacher, TeacherDto>(data));
+        }
     }
-
-    [HttpGet]
-    public async Task<ActionResult<TeacherDto>> GetTeachers()
-    {
-      var teachers = await _teacherRepo.GetTeachersAsync();
-
-      var data = _mapper.Map<IReadOnlyList<Teacher>, IReadOnlyList<TeacherDto>>(teachers);
-
-      return Ok(data);
-    }
-
-    [HttpGet("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TeacherDto>> GetTeacher(int id)
-    {
-      var teacher = await _teacherRepo.GetTeacherByIdAsync(id);
-
-      if (teacher == null) return NotFound(new ApiResponse(404));
-
-      return Ok(_mapper.Map<Teacher, TeacherDto>(teacher));
-    }
-  }
 }

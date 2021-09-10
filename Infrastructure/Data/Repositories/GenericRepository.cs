@@ -45,5 +45,43 @@ namespace Infrastructure.Data.Repositories
         {
             return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), spec);
         }
+
+        public async Task<T> AddAsync(T entity)
+        {
+            await _context.Set<T>().AddAsync(entity);
+            return entity;
+        }
+
+        public async Task AddRangeAsync(T[] entity)
+        {
+            await _context.Set<T>().AddRangeAsync(entity);
+        }
+
+        public T Update(T entity)
+        {
+            _context.Set<T>().Update(entity);
+            return entity;
+        }
+
+        public async Task Delete(int id)
+        {
+            var entity = await _context.Set<T>().FindAsync(id);
+            if (entity == null)
+            {
+                return;
+            }
+
+            _context.Set<T>().Remove(entity);
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
+
+        public int SaveChanges()
+        {
+            return _context.SaveChanges();
+        }
     }
 }

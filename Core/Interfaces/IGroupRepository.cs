@@ -8,5 +8,6 @@ namespace Core.Interfaces
     {
         Task<Group> GetGroupByIdAsync(int id);
         Task<IReadOnlyList<Group>> GetGroupsAsync();
+        Task<IReadOnlyList<Group>> GetGroupsByTeacherIdAsync(int teacherId);
     }
 }

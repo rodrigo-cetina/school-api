@@ -11,7 +11,7 @@ namespace Infrastructure.Data.Config
             builder.Property(p => p.Id).IsRequired();
             builder.Property(p => p.StudentId).IsRequired();
             builder.Property(p => p.GroupId).IsRequired();
-            builder.Property(p => p.Score).HasColumnType("decimal(3,2)").IsRequired();
+            builder.Property(p => p.Score).HasColumnType("decimal(5,2)").IsRequired();
             builder.HasIndex(p => new { p.StudentId, p.GroupId }).IsUnique();
             builder.HasOne(b => b.Student)
                 .WithMany()
